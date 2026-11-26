@@ -324,7 +324,7 @@ function paintConn(){
   el.classList.toggle('on', online);
   const count = M.players.size;
   el.innerHTML = `<i></i>` + (online
-    ? `실시간 연결됨 · ${S.live.broker || 'broker'} · 참가자 ${count}명`
+    ? `실시간 연결됨 · ${net.broker || S.live.broker || 'EMQX'} · 참가자 ${count}명`
     : down
       ? '실시간 연결 안 됨 · 참가자는 개인전, 문제는 문제팩 링크로 공유하세요'
       : `브로커 연결 중... · 참가자 ${count}명`);
