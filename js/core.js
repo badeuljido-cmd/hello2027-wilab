@@ -123,7 +123,10 @@ class Net {
     this.handlers = new Set();
     this.attempt = 0;
     this.reconnectTimer = null;
+    this.startedAt = Date.now();
     this.useBC = params.get('nobc') !== '1';
+    const custom = params.get('broker');
+    this.brokers = custom ? [{ url: custom, name: '직접 연결' }] : BROKERS;
   }
 
   onMessage(fn){ this.handlers.add(fn); }
@@ -131,7 +134,7 @@ class Net {
   start(room){
     this.stop();
     this.room = room;
-    this.topic = `yj26/${room}`;
+    this.topic = `yj26p-4d8c/${room}`;
     if(this.useBC){
       try{
         this.bc = new BroadcastChannel('yj26-' + room);
@@ -155,12 +158,12 @@ class Net {
   }
 
   _connect(index){
-    if(index >= BROKERS.length){
+    if(index >= this.brokers.length){
       this._setStatus('offline');
       this._scheduleReconnect();
       return;
     }
-    const b = BROKERS[index];
+    const b = this.brokers[index];
     this.broker = b.name;
     this._setStatus('connecting', b.name);
 
@@ -378,6 +381,7 @@ export function show(name){
     if(on && sc.enter) sc.enter();
     if(!on && sc.leave) sc.leave();
   }
+  document.body.classList.toggle('mc-mode', target === 'mc');
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
   emit('screen', target);
 }

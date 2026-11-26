@@ -1,5 +1,5 @@
 // 앱 시작점
-import { $, $$, S, net, store, initMe, setNick, setPack, toast, emit, on, esc, registerScreen, show, currentRoute, modal, closeModal } from './core.js';
+import { $, $$, S, net, store, initMe, setNick, setPack, toast, emit, on, esc, registerScreen, show, go, currentRoute, modal, closeModal } from './core.js';
 import { randomNick, sanitizePack, decodePack } from './data.js';
 import { initSlot, initRoulette, initStopwatch, initQuiz, initGuess } from './games.js';
 import { initMc } from './mc.js';
@@ -96,7 +96,7 @@ function paintLive(){
     const n = st.state && st.state.players ? st.state.players.length : 0;
     el.textContent = n ? `실시간 · ${n}명` : '실시간 ON';
     pill.classList.add('on');
-  }else if(net.status === 'connecting'){
+  }else if(net.status === 'connecting' && Date.now() - (net.startedAt || 0) < 8000){
     el.textContent = '연결 중…';
     pill.classList.add('warn');
   }else{
@@ -117,12 +117,29 @@ function paintNotice(){
   }
 }
 
-on('net', () => { paintLive(); });
-on('mcstate', () => { paintLive(); });
+on('net', () => { paintLive(); updateBanner(); });
+on('mcstate', () => { paintLive(); updateBanner(); });
+on('screen', () => updateBanner());
 on('nick', () => { $('#meName').textContent = S.me.nick; $('#nickName').textContent = S.me.nick; });
 on('pack', () => paintNotice());
 
+// ── 라이브 라운드 알림 바 ──
+function updateBanner(){
+  const bar = $('#liveBanner');
+  if(!bar) return;
+  const st = S.live.state;
+  const here = currentRoute();
+  let text = '', target = '';
+  if(st && st.phase === 'quiz-q' && here !== 'quiz'){ text = '퀴즈 시작! 지금 들어오면 점수 쌓여요'; target = 'quiz'; }
+  else if(st && st.phase === 'guess-open' && here !== 'guess'){ text = '눈치 게임 접수 중 · 숫자 내세요'; target = 'guess'; }
+  if(!target){ bar.hidden = true; return; }
+  bar.hidden = false;
+  $('#liveBannerText').textContent = text;
+  $('#liveBannerGo').onclick = () => { emit('openlive', target); go(target); };
+}
+
 // ── 수신 처리 ──
+let helloLock = false;
 net.onMessage(msg => {
   if(msg.from === S.me.id) return;
 
@@ -132,6 +149,12 @@ net.onMessage(msg => {
     S.live.state = msg;
     S.live.online = true;
 
+    // 명단에 내가 없으면 인사 (BC 전용·재접속 대비)
+    if(!(msg.players || []).some(p => p.id === S.me.id) && !helloLock){
+      helloLock = true;
+      net.send('hello', { packRev: S.lastPackRev });
+      setTimeout(() => { helloLock = false; }, 4000);
+    }
     // 내 점수는 사회자 집계를 따른다
     const mine = (msg.players || []).find(p => p.id === S.me.id);
     if(mine && Number.isFinite(mine.pts)){
@@ -172,6 +195,8 @@ net.onMessage(msg => {
 
 // ── 연결 시작 ──
 net.start(S.room);
+// 실시간이 아니어도(같은 기기 탭 동기화) 사회자에게 인사
+setTimeout(() => net.send('hello', { packRev: S.lastPackRev }), 1200);
 on('net', (st) => {
   if(st.status === 'online'){
     S.live.online = true;

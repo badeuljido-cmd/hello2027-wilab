@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0f">
 <meta name="description" content="2026 송년회 게임존 - 슬롯, 룰렛, 블라인드 스톱워치, 스피드 퀴즈, 눈치 게임">
+<meta property="og:title" content="2026 송년회 게임존">
+<meta property="og:description" content="QR 찍고 바로 입장. 슬롯·룰렛·스톱워치·퀴즈·눈치 게임 5종.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
 <title>2026 송년회 게임존</title>
 <link rel="stylesheet" href="css/app.css">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%82%3C/text%3E%3C/svg%3E">
@@ -127,7 +131,7 @@
         <span class="lamp"></span><span class="lamp"></span><span class="lamp"></span>
       </div>
       <div class="reels" id="reels">
-        <div class="reel" data-i="0"><span class="sym">7️⃣</span></div>
+        <div class="reel" data-i="0"><span class="sym">7</span></div>
         <div class="reel" data-i="1"><span class="sym">🍒</span></div>
         <div class="reel" data-i="2"><span class="sym">🔔</span></div>
       </div>
@@ -144,7 +148,7 @@
     <div class="rules card">
       <h3>당첨 기준</h3>
       <ul>
-        <li><b>잭팟</b> 7️⃣7️⃣7️⃣ <span>50점</span></li>
+        <li><b>잭팟</b> 7 · 7 · 7 <span>50점</span></li>
         <li><b>트리플</b> 같은 그림 3개 <span>20점</span></li>
         <li><b>더블</b> 같은 그림 2개 <span>5점</span></li>
       </ul>
@@ -304,6 +308,9 @@
               <button class="btn small" id="btnCopyLink">링크 복사</button>
               <button class="btn small ghost" id="btnSharePack">문제팩 링크 복사</button>
             </div>
+            <div class="mc-btns">
+              <button class="btn small ghost" id="btnRoomChange">방 코드 바꾸기</button>
+            </div>
             <div class="conn-state" id="mcConn"></div>
           </div>
 
@@ -393,6 +400,11 @@
 <div class="win-overlay" id="winOverlay" hidden>
   <div class="win-rays"></div>
   <div class="win-card" id="winCard"></div>
+</div>
+
+<div class="live-banner" id="liveBanner" hidden>
+  <span id="liveBannerText">라운드 진행 중</span>
+  <button class="btn tiny" id="liveBannerGo">참여</button>
 </div>
 
 <div class="toast" id="toast" hidden></div>

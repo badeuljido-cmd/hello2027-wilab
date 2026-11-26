@@ -211,6 +211,25 @@ function wireDash(){
     catch(e){ modal(`<h3>이 링크를 복사하세요</h3><div class="field"><input class="input" value="${esc(url)}" readonly></div><div class="m-actions"><button class="btn" data-close>닫기</button></div>`); }
   };
 
+  $('#btnRoomChange').onclick = () => {
+    modal(`<h3>방 코드 바꾸기</h3><p class="mini">참가자도 같은 코드를 넣어야 들어와요. QR은 기본 방(YE2026)으로 열려요.</p>
+      <div class="field"><input class="input" id="roomNew" maxlength="8" value="${esc(S.room)}"></div>
+      <div class="m-actions"><button class="btn ghost" data-close>취소</button><button class="btn" id="roomSave">적용</button></div>`, {
+      onMount(card){
+        card.querySelector('#roomSave').onclick = () => {
+          const v = card.querySelector('#roomNew').value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8);
+          if(!v){ toast('코드를 넣어주세요'); return; }
+          S.room = v; store('room', v);
+          $('#mcRoomChip').textContent = v;
+          net.switchRoom(v);
+          broadcast();
+          closeModal();
+          toast(`${v} 방으로 바꿨어요`);
+        };
+      }
+    });
+  };
+
   $('#btnSharePack').onclick = async () => {
     const code = await encodePack(S.pack);
     const url = location.origin + location.pathname + '?pack=' + code;
@@ -267,10 +286,15 @@ function wireDash(){
 function paintConn(){
   const el = $('#mcConn');
   if(!el) return;
-  const online = S.live.online;
+  const online = S.live.online || net.status === 'online';
+  const down = net.status === 'offline' && Date.now() - (net.startedAt || 0) > 9000;
   el.classList.toggle('on', online);
   const count = M.players.size;
-  el.innerHTML = `<i></i>${online ? `실시간 연결됨 · ${S.live.broker}` : '브로커 연결 중...'} · 참가자 ${count}명`;
+  el.innerHTML = `<i></i>` + (online
+    ? `실시간 연결됨 · ${S.live.broker || 'broker'} · 참가자 ${count}명`
+    : down
+      ? '실시간 연결 안 됨 · 참가자는 개인전, 문제는 문제팩 링크로 공유하세요'
+      : `브로커 연결 중... · 참가자 ${count}명`);
 }
 
 function paintState(){
@@ -464,6 +488,7 @@ function renderPackList(){
     <div class="pq" data-i="${i}">
       <span class="cat">${esc(q.cat || '기타')}</span>
       <span class="t">${esc(q.q)}</span>
+      <button class="x" data-edit="${i}" title="수정">✎</button>
       <button class="x" data-del="${i}" title="삭제">✕</button>
     </div>`).join('');
   el.querySelectorAll('.pq').forEach(row => {
@@ -473,6 +498,9 @@ function renderPackList(){
       paintQuizPreview();
       toast(`이 문제를 다음 라운드로 준비했어요`);
     };
+  });
+  el.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); editQuestion(Number(btn.dataset.edit)); };
   });
   el.querySelectorAll('[data-del]').forEach(btn => {
     btn.onclick = (e) => {

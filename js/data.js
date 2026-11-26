@@ -101,8 +101,23 @@ export function sanitizePack(raw){
 }
 
 // ── 압축 URL 인코딩 (deflate-raw + base64url, 미지원 시 평문 base64)
+function compactPack(pack){
+  return {
+    n: pack.name || '',
+    q: pack.questions.map(q => [q.cat || '', q.q, q.c, q.a, q.note || ''])
+  };
+}
+function expandPack(c){
+  if(c && Array.isArray(c.questions)) return c;
+  if(!c || !Array.isArray(c.q)) throw new Error('문제팩 형식이 아니에요');
+  return {
+    name: c.n || '공유된 문제팩',
+    questions: c.q.map(a => ({ cat: a[0], q: a[1], c: a[2], a: a[3], note: a[4] || '' }))
+  };
+}
+
 export async function encodePack(pack){
-  const json = JSON.stringify(pack);
+  const json = JSON.stringify(compactPack(pack));
   const bytes = new TextEncoder().encode(json);
   if(typeof CompressionStream !== 'undefined'){
     try{
@@ -122,9 +137,9 @@ export async function decodePack(code){
     const ds = new DecompressionStream('deflate-raw');
     const stream = new Blob([bytes]).stream().pipeThrough(ds);
     const buf = new Uint8Array(await new Response(stream).arrayBuffer());
-    return JSON.parse(new TextDecoder().decode(buf));
+    return expandPack(JSON.parse(new TextDecoder().decode(buf)));
   }
-  return JSON.parse(new TextDecoder().decode(bytes));
+  return expandPack(JSON.parse(new TextDecoder().decode(bytes)));
 }
 
 function b64url(bytes){

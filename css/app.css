@@ -87,7 +87,7 @@ body::after{
 .me-pts{color:var(--gold);font-weight:800;font-variant-numeric:tabular-nums}
 
 /* ── layout ── */
-#app{position:relative;z-index:10;max-width:1080px;margin:0 auto;padding:18px 16px 64px}
+#app{position:relative;z-index:10;max-width:1140px;margin:0 auto;padding:18px 16px 64px}
 .screen{animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}}
 #screen-mc{max-width:none}
@@ -167,20 +167,19 @@ body::after{
 .game-card{
   position:relative;display:flex;flex-direction:column;gap:8px;
   padding:18px;border-radius:20px;text-decoration:none;color:var(--text);
-  background:linear-gradient(165deg,rgba(255,255,255,.07),rgba(255,255,255,.018));
+  background:
+    radial-gradient(110% 70% at 100% 0%, var(--glow, rgba(255,255,255,.06)), transparent 62%),
+    linear-gradient(165deg,rgba(255,255,255,.065),rgba(255,255,255,.015));
   border:1px solid var(--line-soft);overflow:hidden;
   transition:transform .18s ease, border-color .25s ease, box-shadow .25s;
 }
-.game-card::before{
-  content:"";position:absolute;inset:-40% -20% auto auto;width:180px;height:180px;border-radius:50%;
-  filter:blur(28px);opacity:.5;transition:opacity .3s;
-}
-.c-slot::before{background:radial-gradient(circle,#e8c877,transparent 70%)}
-.c-roulette::before{background:radial-gradient(circle,#ff5d8f,transparent 70%)}
-.c-stop::before{background:radial-gradient(circle,#5ff0c4,transparent 70%)}
-.c-quiz::before{background:radial-gradient(circle,#9b8bff,transparent 70%)}
-.c-guess::before{background:radial-gradient(circle,#6fb6ff,transparent 70%)}
-.c-mc::before{background:radial-gradient(circle,#ffffff,transparent 70%);opacity:.18}
+.game-card::before{content:none}
+.c-slot{--glow:rgba(232,200,119,.20)}
+.c-roulette{--glow:rgba(255,93,143,.16)}
+.c-stop{--glow:rgba(95,240,196,.14)}
+.c-quiz{--glow:rgba(155,139,255,.16)}
+.c-guess{--glow:rgba(111,182,255,.14)}
+.c-mc{--glow:rgba(255,255,255,.08)}
 .game-card:hover{transform:translateY(-3px);border-color:var(--line);box-shadow:0 20px 40px -22px rgba(0,0,0,.9)}
 .game-card:hover::before{opacity:.8}
 .gc-top{display:flex;align-items:center;justify-content:space-between;position:relative}
@@ -226,7 +225,7 @@ body::after{
   opacity:0;transition:opacity .3s;
 }
 .machine.spinning .reel::after{opacity:1}
-.sym{font-size:46px;line-height:1;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
+.sym{font-size:46px;line-height:1;font-weight:900;color:var(--champ);filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
 .reel.spin .sym{animation:blur .12s linear infinite}
 @keyframes blur{0%{transform:translateY(-6px);opacity:.5}50%{transform:translateY(6px);opacity:1}100%{transform:translateY(-6px);opacity:.5}}
 .reel.hit{animation:hit .45s ease;border-color:var(--gold);box-shadow:0 0 22px rgba(232,200,119,.55),inset 0 0 30px rgba(232,200,119,.15)}
@@ -359,7 +358,7 @@ body::after{
 .modal-card .field{margin-top:12px}
 .modal-card label{display:block;font-size:11px;color:var(--gold);font-weight:700;margin-bottom:5px}
 
-.win-overlay{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 40%,rgba(60,45,10,.92),rgba(4,4,8,.96));animation:fade .3s}
+.win-overlay{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 50% 38%,rgba(48,36,8,.965),rgba(4,4,8,.995) 65%);backdrop-filter:blur(10px);animation:fade .3s}
 .win-overlay[hidden]{display:none}
 .win-rays{position:absolute;inset:-30%;background:conic-gradient(from 0deg,transparent 0 6deg,rgba(232,200,119,.16) 6deg 9deg,transparent 9deg 18deg);animation:spin 14s linear infinite;opacity:.7}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -372,6 +371,17 @@ body::after{
 .win-card .w-pts{margin-top:10px;font-size:13px;color:var(--gold);font-weight:800}
 .win-card .w-actions{margin-top:22px;display:flex;gap:8px;justify-content:center}
 .win-card .w-hint{margin-top:14px;font-size:11px;color:var(--muted)}
+
+.live-banner{
+  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:78;
+  display:flex;align-items:center;gap:10px;max-width:92vw;padding:9px 10px 9px 15px;
+  border-radius:14px;border:1px solid rgba(232,200,119,.35);
+  background:linear-gradient(90deg,rgba(232,200,119,.22),rgba(255,93,143,.18));
+  backdrop-filter:blur(10px);box-shadow:0 16px 40px -18px #000;
+  animation:toastIn .3s ease;
+}
+.live-banner[hidden]{display:none}
+.live-banner span{font-size:12.5px;font-weight:700;line-height:1.35;max-width:62vw}
 
 .toast{
   position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:80;
@@ -387,6 +397,7 @@ body::after{
 .pin-gate h3{margin:0 0 6px;font-size:18px}
 .pin-row{display:flex;gap:8px;margin-top:16px}
 .pin-input{text-align:center;letter-spacing:.4em;font-weight:800;font-size:18px;max-width:140px;flex:0 0 auto}
+#newPin{letter-spacing:0;font-size:14px;font-weight:600;max-width:120px}
 .pin-err{color:#ff9db8;font-size:12px;min-height:18px;margin:8px 0 0}
 
 .mc-grid{display:grid;gap:12px;grid-template-columns:1fr}
@@ -427,7 +438,8 @@ body::after{
 .mc-guess-view b{color:var(--champ)}
 
 .lb{list-style:none;margin:0;padding:0;display:grid;gap:6px}
-.lb li{display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;font-size:13px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.03)}
+.lb li:not(.mini){display:grid;grid-template-columns:22px 1fr auto;gap:8px;align-items:center;font-size:13px;padding:7px 9px;border-radius:10px;background:rgba(255,255,255,.03)}
+.lb li.mini{display:block;background:none;padding:4px 0}
 .lb li .rank{font-size:11px;font-weight:800;color:var(--muted)}
 .lb li.top1{background:linear-gradient(90deg,rgba(232,200,119,.18),rgba(232,200,119,.03));border:1px solid var(--line)}
 .lb li.top1 .rank{color:var(--gold)}
@@ -460,7 +472,15 @@ body::after{
   .mc-card{padding:18px}
 }
 @media(min-width:980px){
-  #screen-mc ~ .x{}
+  body.mc-mode #app{max-width:1560px;padding-left:20px;padding-right:20px}
+}
+@media(max-width:440px){
+  .topbar{padding:10px 12px;gap:6px}
+  .brand-text{font-size:12.5px}
+  .brand-text small{display:none}
+  .live-pill{font-size:10px;padding:5px 8px}
+  .me-pill{font-size:11px;padding:5px 9px;max-width:40vw}
+  .gc-icon{font-size:24px}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}

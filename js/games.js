@@ -31,11 +31,11 @@ export function showWin({ tag, title, reels = '', sub = '', pts = 0, hint = '', 
 // ════════════════════════════════════════════════
 // 1. 슬롯
 // ════════════════════════════════════════════════
-const SLOT_SYMBOLS = ['7️⃣', '🍒', '🔔', '⭐', '🍀', '💎'];
+const SLOT_SYMBOLS = ['7', '🍒', '🔔', '⭐', '🍀', '💎'];
 
 function slotPick(){
   // 7은 각 릴당 8% 정도로 살짝 희귀하게
-  if(Math.random() < 0.08) return '7️⃣';
+  if(Math.random() < 0.08) return '7';
   const rest = SLOT_SYMBOLS.slice(1);
   return rest[Math.floor(Math.random() * rest.length)];
 }
@@ -90,7 +90,7 @@ export function initSlot(){
 
     const [a, b, c] = finals;
     const triple = a === b && b === c;
-    const jackpot = triple && a === '7️⃣';
+    const jackpot = triple && a === '7';
     const pair = !triple && (a === b || b === c || a === c);
 
     tries++;
@@ -118,7 +118,7 @@ export function initSlot(){
       sfx.lose();
     }
 
-    resultEl.textContent = jackpot ? '7️⃣7️⃣7️⃣ 잭팟!' : triple ? `${a}${a}${a} 트리플` : pair ? '두 개 일치 · 더블' : '아쉬워요, 꽝';
+    resultEl.textContent = jackpot ? '777 잭팟!' : triple ? `${a}${a}${a} 트리플` : pair ? '두 개 일치 · 더블' : '아쉬워요, 꽝';
     if(pts){
       addPoints(pts, '슬롯');
       best = Math.max(best, pts);
@@ -580,10 +580,13 @@ export function initQuiz(){
       box.classList.add('waiting');
       return;
     }
+    const meLive = (st.players || []).find(p => p.id === S.me.id);
+    if(meLive) scoreEl.textContent = meLive.pts;
     const qz = st.quiz;
     if(qz.qid !== liveQid){
       liveQid = qz.qid;
       liveAnswered = false;
+      answered = false;
       qIndex.textContent = `${(qz.index ?? 0) + 1} / ${qz.total || '?'} · 실시간`;
       qText.textContent = qz.q;
       renderQuestion({ q: qz.q, c: qz.choices, a: -1 });
@@ -610,6 +613,10 @@ export function initQuiz(){
     });
     const mine = (st.quiz.stats && st.quiz.stats.byPlayer) ? st.quiz.stats.byPlayer[S.me.id] : null;
     const right = mine && mine.choice === correct;
+    if(mine && !right){
+      const myBtn = qChoices.querySelectorAll('.q-choice')[mine.choice];
+      if(myBtn){ myBtn.classList.remove('dim'); myBtn.classList.add('wrong'); }
+    }
     if(right) confetti(30);
     qFoot.innerHTML = (right ? '<b>정답</b>' : '<b>이번엔 아쉬워요</b>') + ` · 정답은 ${'ABCD'[correct]}번. ${esc(qz.note || '')}`;
     qTimer.textContent = '';
@@ -617,15 +624,19 @@ export function initQuiz(){
   }
 
   // 모드 전환
+  function setMode(m){
+    mode = m;
+    $$('#quizModeSwitch .seg').forEach(x => x.classList.toggle('active', x.dataset.mode === m));
+    answered = false;
+    liveQid = null;
+    stopTimer();
+    if(m === 'solo') startSolo();
+    else renderLive();
+  }
   $$('#quizModeSwitch .seg').forEach(b => {
-    b.onclick = () => {
-      $$('#quizModeSwitch .seg').forEach(x => x.classList.toggle('active', x === b));
-      mode = b.dataset.mode;
-      stopTimer();
-      if(mode === 'solo') startSolo();
-      else renderLive();
-    };
+    b.onclick = () => setMode(b.dataset.mode);
   });
+  on('openlive', (game) => { if(game === 'quiz') setMode('live'); });
 
   $('#btnQuizRestart').onclick = () => { if(mode === 'solo') startSolo(); else renderLive(); };
   $('#btnQuizShuffle').onclick = () => { if(mode === 'solo') startSolo(); else toast('실시간 모드는 사회자가 순서를 정해요'); };
@@ -642,8 +653,11 @@ export function initQuiz(){
   registerScreen('quiz', {
     enter(){
       paintPackInfo();
-      if(mode === 'solo' && !deck.length) startSolo();
+      const st = S.live.state;
+      const liveNow = st && st.phase && String(st.phase).startsWith('quiz');
+      if(liveNow) setMode('live');
       else if(mode === 'live') renderLive();
+      else if(!deck.length) startSolo();
     }
   });
   paintPackInfo();
@@ -848,6 +862,7 @@ export function initGuess(){
   $('#gInput').addEventListener('keydown', e => { if(e.key === 'Enter') $('#btnGuess').click(); });
 
   on('mcstate', () => { if(liveRound !== null || (S.live.state && S.live.state.guess)) renderLive(); });
+  on('openlive', (g) => { if(g === 'guess') renderLive(); });
   on('net', () => { if(S.live.state) renderLive(); });
 
   registerScreen('guess', {
