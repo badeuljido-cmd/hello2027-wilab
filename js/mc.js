@@ -100,7 +100,7 @@ function mountDash(){
 }
 
 function checkQrHost(){
-  const target = 'https://badeuljido-cmd.github.io/year-end-party-2026/';
+  const target = 'https://badeuljido-cmd.github.io/hello2027-wilab/';
   const now = location.origin + location.pathname;
   const old = document.getElementById('qrHostWarn');
   if(old) old.remove();
