@@ -73,7 +73,19 @@ function tryUnlock(){
   }
 }
 
+document.addEventListener('click', (e) => {
+  const ov = document.getElementById('qrFull');
+  if(!ov || ov.hidden) return;
+  if(e.target.closest('#btnBigQr')) return;
+  ov.hidden = true;
+});
+document.addEventListener('keydown', (e) => {
+  const ov = document.getElementById('qrFull');
+  if(ov && !ov.hidden && (e.key === 'Escape' || e.key === ' ')){ ov.hidden = true; }
+});
+
 function mountDash(){
+  checkQrHost();
   $('#pinGate').hidden = true;
   $('#mcDash').hidden = false;
   if(!uiReady){
@@ -85,6 +97,20 @@ function mountDash(){
   paintConn();
   paintState();
   startHeartbeat();
+}
+
+function checkQrHost(){
+  const target = 'https://badeuljido-cmd.github.io/year-end-party-2026/';
+  const now = location.origin + location.pathname;
+  const old = document.getElementById('qrHostWarn');
+  if(old) old.remove();
+  if(now.replace(/\/$/, '') === target.replace(/\/$/, '')) return;
+  const p = document.createElement('p');
+  p.id = 'qrHostWarn';
+  p.className = 'mini';
+  p.style.color = '#ffcf7a';
+  p.textContent = '지금 주소(' + now + ')가 QR 이미지의 주소와 달라요. 이 화면의 QR은 기본 배포 주소용입니다.';
+  $('#mcQr').parentElement.after(p);
 }
 
 function startHeartbeat(){
@@ -209,6 +235,13 @@ function wireDash(){
     const url = location.origin + location.pathname + '?room=' + encodeURIComponent(S.room);
     try{ await navigator.clipboard.writeText(url); toast('입장 링크를 복사했어요'); }
     catch(e){ modal(`<h3>이 링크를 복사하세요</h3><div class="field"><input class="input" value="${esc(url)}" readonly></div><div class="m-actions"><button class="btn" data-close>닫기</button></div>`); }
+  };
+
+  $('#btnBigQr').onclick = () => {
+    const ov = $('#qrFull');
+    $('#qrFullImg').src = 'img/qr-large.png';
+    $('#qrFullUrl').textContent = location.origin + location.pathname;
+    ov.hidden = false;
   };
 
   $('#btnRoomChange').onclick = () => {

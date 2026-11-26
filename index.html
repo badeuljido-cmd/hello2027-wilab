@@ -309,6 +309,7 @@
               <button class="btn small ghost" id="btnSharePack">문제팩 링크 복사</button>
             </div>
             <div class="mc-btns">
+              <button class="btn small" id="btnBigQr">QR 크게 보기</button>
               <button class="btn small ghost" id="btnRoomChange">방 코드 바꾸기</button>
             </div>
             <div class="conn-state" id="mcConn"></div>
@@ -400,6 +401,16 @@
 <div class="win-overlay" id="winOverlay" hidden>
   <div class="win-rays"></div>
   <div class="win-card" id="winCard"></div>
+</div>
+
+<div class="qr-full" id="qrFull" hidden>
+  <div class="qr-full-inner">
+    <p class="qr-tag">2026 송년회 게임존</p>
+    <button class="close" id="qrFullClose">닫기</button>
+    <img id="qrFullImg" alt="입장 QR 코드">
+    <p class="qr-full-url" id="qrFullUrl"></p>
+    <p class="qr-full-hint">휴대폰 카메라로 찍으면 바로 입장 · 로그인 없음</p>
+  </div>
 </div>
 
 <div class="live-banner" id="liveBanner" hidden>

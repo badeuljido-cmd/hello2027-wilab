@@ -372,6 +372,15 @@ body::after{
 .win-card .w-actions{margin-top:22px;display:flex;gap:8px;justify-content:center}
 .win-card .w-hint{margin-top:14px;font-size:11px;color:var(--muted)}
 
+.qr-full{position:fixed;inset:0;z-index:85;display:grid;place-items:center;background:#f7f5ef;color:#111;padding:4vmin;text-align:center}
+.qr-full[hidden]{display:none}
+.qr-full-inner{display:flex;flex-direction:column;align-items:center;gap:2.2vmin;max-height:100%}
+.qr-full .qr-tag{font-size:clamp(20px,3.4vmin,40px);font-weight:800;color:#8a6a18;letter-spacing:.02em;margin:0}
+.qr-full img{width:min(66vmin,72vh);height:min(66vmin,72vh);display:block;background:#fff;padding:1.6vmin;border-radius:2vmin}
+.qr-full-url{font-size:clamp(11px,1.6vmin,18px);color:#6a675c;margin:0;word-break:break-all}
+.qr-full-hint{font-size:clamp(13px,2vmin,24px);font-weight:700;color:#2a2620;margin:0}
+.qr-full .close{position:absolute;top:2.4vmin;right:2.4vmin;font:inherit;font-size:clamp(14px,2vmin,22px);font-weight:700;color:#111;background:#e6e2d6;border:none;border-radius:999px;padding:1.6vmin 3vmin;cursor:pointer}
+
 .live-banner{
   position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:78;
   display:flex;align-items:center;gap:10px;max-width:92vw;padding:9px 10px 9px 15px;
