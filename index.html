@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="description" content="2026 송년회 게임존 - 슬롯, 룰렛, 블라인드 스톱워치, 스피드 퀴즈, 눈치 게임">
+<title>2026 송년회 게임존</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%82%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+<div class="bg-glow" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<header class="topbar" id="topbar">
+  <a class="brand" href="#/home">
+    <span class="brand-mark">🥂</span>
+    <span class="brand-text">2026 송년회<small>게임존</small></span>
+  </a>
+  <div class="topbar-right">
+    <div class="live-pill" id="livePill" title="실시간 연결 상태">
+      <i class="dot"></i><span id="liveText">연결 중</span>
+    </div>
+    <button class="me-pill" id="mePill" title="내 닉네임 바꾸기">
+      <span id="meName">손님</span><span class="me-pts" id="mePts">0</span>
+    </button>
+  </div>
+</header>
+
+<main id="app">
+
+  <!-- ══════════ HOME ══════════ -->
+  <section class="screen" id="screen-home">
+    <div class="hero">
+      <p class="eyebrow">2026 YEAR-END PARTY</p>
+      <h1>한 해 마무리,<br><em>오늘은 놀면서.</em></h1>
+      <p class="hero-sub">로그인 없이 바로 시작. 이름은 익명으로 붙여줬어요.</p>
+
+      <div class="nickcard">
+        <div class="nick-main">
+          <span class="nick-label">오늘의 이름</span>
+          <strong id="nickName">···</strong>
+        </div>
+        <div class="nick-actions">
+          <button class="btn tiny ghost" id="btnReroll">다른 이름</button>
+          <button class="btn tiny ghost" id="btnCustomNick">직접 정하기</button>
+        </div>
+      </div>
+
+      <div class="join-panel" id="joinPanel">
+        <div class="join-row">
+          <label class="join-label" for="roomInput">방 코드</label>
+          <input id="roomInput" class="input" maxlength="8" placeholder="YE2026" autocomplete="off" spellcheck="false">
+          <button class="btn small" id="btnJoinRoom">입장</button>
+        </div>
+        <p class="join-hint" id="joinHint">사회자가 알려준 방 코드를 넣으면 실시간 게임에 함께 들어가요. 모르면 그냥 아래 게임만 즐겨도 돼요.</p>
+      </div>
+    </div>
+
+    <div class="section-head">
+      <h2>게임 5종</h2>
+      <span class="section-note">혼자서도, 다 같이도</span>
+    </div>
+
+    <div class="games" id="gameGrid">
+      <a class="game-card c-slot" href="#/slot">
+        <div class="gc-top"><span class="gc-icon">🎰</span><span class="gc-diff">운빨 · 하</span></div>
+        <h3>777 럭키 슬롯</h3>
+        <p>레버 당기고 7이 세 개 나오면 잭팟. 오늘 운을 먼저 확인해보세요.</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i></span><span class="go">시작 →</span></div>
+      </a>
+
+      <a class="game-card c-roulette" href="#/roulette">
+        <div class="gc-top"><span class="gc-icon">🎡</span><span class="gc-diff">운빨 · 하</span></div>
+        <h3>행운의 돌림판</h3>
+        <p>경품부터 벌칙까지. 돌아가는 동안 마음 졸이게 되는 그 룰렛.</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i></span><span class="go">시작 →</span></div>
+      </a>
+
+      <a class="game-card c-stop" href="#/stopwatch">
+        <div class="gc-top"><span class="gc-icon">⏱️</span><span class="gc-diff">감각 · 중</span></div>
+        <h3>7.77초 블라인드</h3>
+        <p>3.5초만 보여주고 숫자를 숨겨요. 7.77초에 맞춰 멈출 수 있겠어요?</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i><i></i></span><span class="go">시작 →</span></div>
+      </a>
+
+      <a class="game-card c-quiz" href="#/quiz">
+        <div class="gc-top"><span class="gc-icon">🧠</span><span class="gc-diff">두뇌 · 중상</span></div>
+        <h3>송년회 스피드 퀴즈</h3>
+        <p>상식, 트렌드, 직장인 공감, 넌센스까지. 우리 회사 맞춤 문제도 나와요.</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i><i></i></span><span class="go">시작 →</span></div>
+      </a>
+
+      <a class="game-card c-guess" href="#/guess">
+        <div class="gc-top"><span class="gc-icon">👀</span><span class="gc-diff">눈치 · 중상</span></div>
+        <h3>눈치 게임</h3>
+        <p>평균의 2/3을 찍거나, 아무도 안 고른 숫자를 고르면 이겨요.</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i><i></i></span><span class="go">시작 →</span></div>
+      </a>
+
+      <a class="game-card c-mc" href="#/mc">
+        <div class="gc-top"><span class="gc-icon">🎤</span><span class="gc-diff">사회자 전용</span></div>
+        <h3>MC 모드</h3>
+        <p>큰 화면에 띄울 QR, 라운드 진행, 실시간 순위까지 한 곳에서.</p>
+        <div class="gc-foot"><span class="dots"><i></i><i></i><i></i></span><span class="go">열기 →</span></div>
+      </a>
+    </div>
+
+    <div class="notice" id="homeNotice" hidden></div>
+
+    <footer class="foot">
+      <p>실시간 게임은 사회자 화면과 같은 방에 있어야 순위가 쌓여요. 연결이 막히는 네트워크라면 각자 폰에서 개인전으로 즐기고, 사회자가 문제팩 링크를 공유하는 방식으로도 진행할 수 있어요.</p>
+    </footer>
+  </section>
+
+  <!-- ══════════ SLOT ══════════ -->
+  <section class="screen" id="screen-slot" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>777 럭키 슬롯</h2>
+      <p class="page-sub">7이 세 개면 잭팟. 같은 그림 세 개면 트리플.</p>
+    </div>
+
+    <div class="machine card">
+      <div class="machine-top">
+        <span class="lamp"></span><span class="lamp"></span><span class="lamp"></span>
+      </div>
+      <div class="reels" id="reels">
+        <div class="reel" data-i="0"><span class="sym">7️⃣</span></div>
+        <div class="reel" data-i="1"><span class="sym">🍒</span></div>
+        <div class="reel" data-i="2"><span class="sym">🔔</span></div>
+      </div>
+      <div class="payline"></div>
+      <div class="result-line" id="slotResult">레버를 당겨보세요</div>
+      <button class="btn big gold" id="btnSpin">레버 당기기</button>
+      <div class="machine-foot">
+        <button class="icon-btn" id="btnMute" title="소리">🔊</button>
+        <span class="tries" id="slotTries">도전 0회</span>
+        <span class="best" id="slotBest">최고 기록 없음</span>
+      </div>
+    </div>
+
+    <div class="rules card">
+      <h3>당첨 기준</h3>
+      <ul>
+        <li><b>잭팟</b> 7️⃣7️⃣7️⃣ <span>50점</span></li>
+        <li><b>트리플</b> 같은 그림 3개 <span>20점</span></li>
+        <li><b>더블</b> 같은 그림 2개 <span>5점</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════ ROULETTE ══════════ -->
+  <section class="screen" id="screen-roulette" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>행운의 돌림판</h2>
+      <p class="page-sub">경품이 걸릴지 벌칙이 걸릴지, 돌려봐야 알아요.</p>
+    </div>
+
+    <div class="wheel-wrap card">
+      <div class="wheel-stage">
+        <div class="wheel-pointer"></div>
+        <canvas id="wheel" width="760" height="760" aria-label="룰렛 판"></canvas>
+        <button class="wheel-hub" id="btnSpinWheel">돌리기</button>
+      </div>
+      <div class="wheel-result" id="wheelResult">가운데 버튼을 눌러주세요</div>
+      <div class="wheel-meta" id="wheelMeta"></div>
+    </div>
+
+    <div class="rules card">
+      <h3>이번 판 항목</h3>
+      <div id="wheelList" class="wheel-list"></div>
+      <p class="mini">사회자가 항목과 비율을 바꾸면 모두 같은 판으로 돌아가요.</p>
+    </div>
+  </section>
+
+  <!-- ══════════ STOPWATCH ══════════ -->
+  <section class="screen" id="screen-stopwatch" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>7.77초 블라인드 스톱워치</h2>
+      <p class="page-sub">3.5초까지만 숫자가 보여요. 그 뒤로는 감으로 멈추세요.</p>
+    </div>
+
+    <div class="stop card" id="stopCard">
+      <div class="stop-digits" id="stopDigits">0.00</div>
+      <div class="stop-state" id="stopState">준비됐으면 시작</div>
+      <button class="btn big gold" id="btnStopStart">시작</button>
+      <div class="stop-gauge"><div class="stop-gauge-fill" id="stopFill"></div><span class="stop-target">7.77</span></div>
+    </div>
+
+    <div class="cards-row">
+      <div class="mini-card card"><span>내 최고</span><strong id="stopBest">기록 없음</strong></div>
+      <div class="mini-card card"><span>도전</span><strong id="stopTries">0회</strong></div>
+    </div>
+
+    <div class="rules card">
+      <h3>등급</h3>
+      <div class="grade-table" id="gradeTable"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ QUIZ ══════════ -->
+  <section class="screen" id="screen-quiz" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>송년회 스피드 퀴즈</h2>
+      <p class="page-sub">한 문제당 15초. 맞히면 10점.</p>
+    </div>
+
+    <div class="mode-switch" id="quizModeSwitch">
+      <button class="seg active" data-mode="solo">혼자 연습</button>
+      <button class="seg" data-mode="live">실시간 대기</button>
+    </div>
+
+    <div class="quiz-box card" id="quizBox">
+      <div class="quiz-top">
+        <span class="q-index" id="qIndex">준비</span>
+        <span class="q-timer" id="qTimer"></span>
+      </div>
+      <div class="q-bar"><i id="qBar"></i></div>
+      <p class="q-text" id="qText">문제를 불러오는 중이에요.</p>
+      <div class="q-choices" id="qChoices"></div>
+      <div class="q-foot" id="qFoot"></div>
+    </div>
+
+    <div class="quiz-score-row">
+      <div class="mini-card card"><span>점수</span><strong id="quizScore">0</strong></div>
+      <div class="mini-card card"><span>정답</span><strong id="quizRight">0</strong></div>
+      <div class="mini-card card"><span>최고 기록</span><strong id="quizBest">0</strong></div>
+    </div>
+
+    <div class="quiz-controls">
+      <button class="btn ghost small" id="btnQuizRestart">처음부터</button>
+      <button class="btn ghost small" id="btnQuizShuffle">문제 섞기</button>
+      <span class="pack-info" id="packInfo"></span>
+    </div>
+  </section>
+
+  <!-- ══════════ GUESS ══════════ -->
+  <section class="screen" id="screen-guess" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>눈치 게임</h2>
+      <p class="page-sub">남들은 뭘 낼지 읽는 게임. 두 가지 방식으로 즐겨요.</p>
+    </div>
+
+    <div class="mode-switch" id="guessMode">
+      <button class="seg active" data-gmode="third">평균의 2/3</button>
+      <button class="seg" data-gmode="unique">겹치지 않는 숫자</button>
+    </div>
+
+    <div class="guess-box card" id="guessBox">
+      <div class="g-head">
+        <span class="g-round" id="gRound">혼자 연습 · AI 5명</span>
+        <span class="g-clock" id="gClock"></span>
+      </div>
+      <p class="g-desc" id="gDesc">0부터 100 사이 숫자를 하나 골라요. 모두의 평균에 2/3를 곱한 값에 가장 가까운 사람이 이겨요.</p>
+      <div class="g-input-row">
+        <input class="input g-input" id="gInput" type="number" inputmode="numeric" placeholder="숫자" min="0" max="100">
+        <button class="btn gold" id="btnGuess">내기</button>
+      </div>
+      <div class="g-quick" id="gQuick"></div>
+      <div class="g-result" id="gResult"></div>
+    </div>
+
+    <div class="rules card" id="guessRules">
+      <h3>이기는 법</h3>
+      <div id="guessRuleBody"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ MC ══════════ -->
+  <section class="screen" id="screen-mc" hidden>
+    <div class="page-head">
+      <a class="back" href="#/home">← 홈</a>
+      <h2>MC 모드</h2>
+      <p class="page-sub">큰 화면에 띄워두고 진행하세요.</p>
+    </div>
+
+    <div class="pin-gate card" id="pinGate">
+      <h3>PIN 4자리</h3>
+      <p class="mini">기본값은 <b>2026</b>이에요. 나중에 바꿀 수 있어요.</p>
+      <div class="pin-row">
+        <input class="input pin-input" id="pinInput" type="password" inputmode="numeric" maxlength="4" placeholder="••••">
+        <button class="btn gold" id="btnPin">들어가기</button>
+      </div>
+      <p class="pin-err" id="pinErr"></p>
+    </div>
+
+    <div id="mcDash" hidden>
+      <div class="mc-grid">
+        <!-- left: entry -->
+        <div class="mc-col">
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>입장 QR</h3><span class="chip" id="mcRoomChip">YE2026</span></div>
+            <div class="qr-holder">
+              <img id="mcQr" alt="입장 QR 코드" width="300" height="300">
+            </div>
+            <p class="qr-url" id="mcQrUrl"></p>
+            <div class="mc-btns">
+              <button class="btn small" id="btnCopyLink">링크 복사</button>
+              <button class="btn small ghost" id="btnSharePack">문제팩 링크 복사</button>
+            </div>
+            <div class="conn-state" id="mcConn"></div>
+          </div>
+
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>참가자</h3><span class="chip" id="mcPlayerCount">0명</span></div>
+            <div class="player-list" id="mcPlayers"><p class="mini">아직 아무도 없어요. QR을 보여주세요.</p></div>
+          </div>
+        </div>
+
+        <!-- center: rounds -->
+        <div class="mc-col wide">
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>퀴즈 라운드</h3><span class="chip" id="mcQuizState">대기</span></div>
+            <div class="mc-q-preview" id="mcQPreview">문제를 고르면 여기 나와요.</div>
+            <div class="mc-btns">
+              <button class="btn gold" id="btnStartQuiz">문제 띄우기</button>
+              <button class="btn" id="btnRevealQuiz" disabled>정답 공개</button>
+              <button class="btn ghost" id="btnNextQuiz" disabled>다음 문제</button>
+            </div>
+            <div class="mc-timer" id="mcTimer"></div>
+            <div class="mc-answer-bars" id="mcAnswerBars"></div>
+          </div>
+
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>눈치 게임 라운드</h3><span class="chip" id="mcGuessState">대기</span></div>
+            <div class="mc-btns">
+              <button class="seg tiny" data-gm="third">평균의 2/3</button>
+              <button class="seg tiny" data-gm="unique">겹치지 않는 숫자</button>
+            </div>
+            <div class="mc-btns">
+              <button class="btn gold" id="btnStartGuess">라운드 시작</button>
+              <button class="btn" id="btnEndGuess" disabled>결과 집계</button>
+            </div>
+            <div class="mc-timer" id="mcGuessTimer"></div>
+            <div class="mc-guess-view" id="mcGuessView"></div>
+          </div>
+
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>리더보드</h3><button class="btn tiny ghost" id="btnResetScores">초기화</button></div>
+            <ol class="lb" id="mcLeaderboard"><li class="mini">참가자가 들어오면 순위가 쌓여요.</li></ol>
+          </div>
+        </div>
+
+        <!-- right: settings -->
+        <div class="mc-col">
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>문제팩</h3><span class="chip" id="mcPackCount">0문제</span></div>
+            <div class="pack-list" id="mcPackList"></div>
+            <div class="mc-btns">
+              <button class="btn small" id="btnAddQ">문제 추가</button>
+              <button class="btn small ghost" id="btnExportQ">JSON 내려받기</button>
+              <button class="btn small ghost" id="btnImportQ">JSON 불러오기</button>
+              <input type="file" id="fileQ" accept="application/json,.json" hidden>
+            </div>
+            <p class="mini">추가한 문제는 이 기기에 저장돼요. 문제팩 링크를 복사하면 다른 기기에서도 그대로 열려요.</p>
+          </div>
+
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>룰렛 항목</h3><span class="chip" id="mcWheelCount">0개</span></div>
+            <div class="wheel-edit" id="mcWheelEdit"></div>
+            <div class="mc-btns">
+              <button class="btn small" id="btnAddWheel">항목 추가</button>
+              <button class="btn small ghost" id="btnWheelReset">기본값으로</button>
+            </div>
+            <p class="mini">바꾸면 참가자 화면 룰렛도 같이 바뀌어요.</p>
+          </div>
+
+          <div class="card mc-card">
+            <div class="mc-card-head"><h3>PIN 변경</h3></div>
+            <div class="mc-btns">
+              <input class="input pin-input" id="newPin" type="password" inputmode="numeric" maxlength="4" placeholder="새 PIN">
+              <button class="btn small" id="btnChangePin">변경</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- overlays -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" id="modalCard"></div>
+</div>
+
+<div class="win-overlay" id="winOverlay" hidden>
+  <div class="win-rays"></div>
+  <div class="win-card" id="winCard"></div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
